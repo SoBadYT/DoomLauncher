@@ -8,7 +8,6 @@ namespace DoomLauncher
     public partial class MainForm : Form
     {
         private readonly string saveFile = @"\_sobad_doom_launcher.cfg";
-        private readonly string[] validIWads = new string[] { "doom.wad", "doom2.wad", "tnt.wad", "plutonia.wad" };
 
         private string savePath;
 
@@ -85,7 +84,10 @@ namespace DoomLauncher
 
         private bool CheckIfValidIWad(string wadName)
         {
-            return Array.IndexOf(validIWads, wadName) > -1;
+            byte[] identifier = new byte[4];
+            FileStream stream = File.OpenRead(wadName);
+            stream.Read(identifier, 0, 4);
+            return System.Text.Encoding.UTF8.GetString(identifier, 0, identifier.Length) == "IWAD";
         }
 
 
@@ -134,7 +136,7 @@ namespace DoomLauncher
 
                 if (fileType == ".wad")
                 {
-                    if (CheckIfValidIWad(fileToLoad))
+                    if (CheckIfValidIWad(file))
                     {
                         lstIWads.Items.Add(fileToLoad);
                     }
